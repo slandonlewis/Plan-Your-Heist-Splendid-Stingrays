@@ -16,7 +16,10 @@ namespace heist
 
             //Console.WriteLine("\nYour Team:");
             //TeamMember.Team.ForEach((tm) => {tm.displayInfo();});
-
+            
+            
+            Console.WriteLine($"Your team's skill level: {TeamMember.TeamSkill}");
+            Console.WriteLine($"Bank difficulty level: {bank.RequiredSkill}");
             if (bank.RequiredSkill <= TeamMember.TeamSkill)
             {
                 Console.WriteLine("Yay!!");
@@ -38,7 +41,8 @@ namespace heist
 
         public Bank(int difficulty)
         {
-            RequiredSkill = difficulty;
+            int luck = new Random().Next(-10, 11);
+            RequiredSkill = difficulty + luck;
         }
     }
 
