@@ -1,23 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace heist
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
+            Bank bank = new Bank(100);
+
             // enter team member information
             Console.WriteLine("Plan Your Heist!");
             TeamMember.CreatePrompt();
-            Console.WriteLine("\nYour Team:");
-            TeamMember.Team.ForEach((tm) => {tm.displayInfo();});
+
+            //Console.WriteLine("\nYour Team:");
+            //TeamMember.Team.ForEach((tm) => {tm.displayInfo();});
+
+            if (bank.RequiredSkill <= TeamMember.TeamSkill)
+            {
+                Console.WriteLine("Yay!!");
+            }
+            else
+            {
+                Console.WriteLine("You are now in jail.");
+            }
+
         }
 
     }
+
+    public class Bank
+    {
+        public int RequiredSkill;
+
+        
+
+        public Bank(int difficulty)
+        {
+            RequiredSkill = difficulty;
+        }
+    }
+
     public class TeamMember
     {
         public static List<TeamMember> Team = new List<TeamMember>();
+
+        public static int TeamSkill {
+            get
+            {
+                int skill = 0;
+                Team.ForEach((member) => skill += member.SkillLevel);
+                return skill;
+            } 
+        }
+
+
+        public string Name { get; }
+        public int SkillLevel { get; }
+        public decimal CourageFactor { get; }
+
 
         public static void CreatePrompt()
         {
@@ -27,13 +69,13 @@ namespace heist
                 Console.WriteLine("Enter team member name: (blank to continue) ");
                 string name = Console.ReadLine();
                 if (String.IsNullOrWhiteSpace(name)){break;}
-                Console.WriteLine("Enter skill level (1 - 10): ");
+                Console.WriteLine("Enter skill level (1 - 20): ");
                 int skillLevel = 0;
-                while (skillLevel < 1 || skillLevel > 10)
+                while (skillLevel < 1 || skillLevel > 50)
                 {
                     if (skillLevel != 0)
                     {
-                        Console.WriteLine("Input out of range, please enter level between 1 and 10");
+                        Console.WriteLine("Input out of range, please enter level between 1 and 20");
                     }
                     skillLevel = int.Parse(Console.ReadLine());
                 }
@@ -64,8 +106,5 @@ namespace heist
         {
             Console.WriteLine($"\nName: {Name}, \nSkill Lvl: {SkillLevel}, \nCourage Factor: {CourageFactor}");
         }
-        public string Name { get; }
-        public int SkillLevel { get; }
-        public decimal CourageFactor { get; }
     }
 }
