@@ -8,7 +8,6 @@ namespace heist
     {
         static void Main(string[] args)
         {
-            Bank bank = new Bank(100);
 
             // enter team member information
             Console.WriteLine("Plan Your Heist!");
@@ -16,18 +15,25 @@ namespace heist
 
             //Console.WriteLine("\nYour Team:");
             //TeamMember.Team.ForEach((tm) => {tm.displayInfo();});
-            
-            
-            Console.WriteLine($"Your team's skill level: {TeamMember.TeamSkill}");
-            Console.WriteLine($"Bank difficulty level: {bank.RequiredSkill}");
-            if (bank.RequiredSkill <= TeamMember.TeamSkill)
+
+            Console.WriteLine("Enter number of trial runs:");
+            int numberOfTrialRuns = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter bank's difficulty:");
+            int bankDifficulty = int.Parse(Console.ReadLine());
+            Bank bank = new Bank(numberOfTrialRuns, bankDifficulty);
+
+            int wins = 0;
+            for (int i = numberOfTrialRuns; i > 0; i--)
             {
-                Console.WriteLine("Yay!!");
+                Console.WriteLine($"-----------Robbery #{numberOfTrialRuns - (i - 1)}-----------");
+                Console.WriteLine($"Your team's skill level: {TeamMember.TeamSkill}");
+                if (bank.Rob())
+                {
+                    wins++;
+                }
             }
-            else
-            {
-                Console.WriteLine("You are now in jail.");
-            }
+            Console.WriteLine($"\nNumber of Successes: {wins}");
+            Console.WriteLine($"Number of Failures: {numberOfTrialRuns - wins}");
 
         }
 
@@ -36,13 +42,28 @@ namespace heist
     public class Bank
     {
         public int RequiredSkill;
-
-        
-
-        public Bank(int difficulty)
+        public int NumOfScenarios;
+        public Bank(int numOfScenarios, int requiredSkill)
         {
-            int luck = new Random().Next(-10, 11);
-            RequiredSkill = difficulty + luck;
+            RequiredSkill = requiredSkill;
+            NumOfScenarios = numOfScenarios;
+        }
+
+        public bool Rob()
+        {
+            int skillToPass = new Random().Next(-10, 11) + RequiredSkill;
+
+            Console.WriteLine($"Heist difficulty level: {skillToPass}");
+            if (skillToPass <= TeamMember.TeamSkill)
+            {
+                Console.WriteLine("Yay!!\n");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("You are now in jail.\n");
+                return false;
+            }
         }
     }
 
@@ -50,13 +71,14 @@ namespace heist
     {
         public static List<TeamMember> Team = new List<TeamMember>();
 
-        public static int TeamSkill {
+        public static int TeamSkill
+        {
             get
             {
                 int skill = 0;
                 Team.ForEach((member) => skill += member.SkillLevel);
                 return skill;
-            } 
+            }
         }
 
 
@@ -67,15 +89,15 @@ namespace heist
 
         public static void CreatePrompt()
         {
-            while (true) 
+            while (true)
             {
                 Console.WriteLine($"\nMember #{Team.Count + 1}:");
                 Console.WriteLine("Enter team member name: (blank to continue) ");
                 string name = Console.ReadLine();
-                if (String.IsNullOrWhiteSpace(name)){break;}
+                if (String.IsNullOrWhiteSpace(name)) { break; }
                 Console.WriteLine("Enter skill level (1 - 20): ");
                 int skillLevel = 0;
-                while (skillLevel < 1 || skillLevel > 50)
+                while (skillLevel < 1 || skillLevel > 20)
                 {
                     if (skillLevel != 0)
                     {
